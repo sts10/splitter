@@ -2,7 +2,8 @@
 // https://bheisler.github.io/criterion.rs/book/getting_started.html
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-// extern crate aho_corasick;
+extern crate memchr;
+use memchr::memchr;
 // use aho_corasick::AhoCorasick;
 use std::str;
 
@@ -48,6 +49,15 @@ fn remove_through_first_char_variant_3(s: &str, ch: char) -> &str {
     }
 }
 
+fn remove_through_first_char_variant_4(s: &str, ch: char) -> &str {
+    // This does not use str::splitn(), but probably has an extra bounds check.
+    // But perhaps the compiler will optmize it out? I don't know, you'd need
+    // to measure.
+    match memchr(ch as u8, s.as_bytes()) {
+        None => s, // not found => return the whole string
+        Some(pos) => &s[pos + 1..],
+    }
+}
 pub fn criterion_benchmark(c: &mut Criterion) {
     let mut group = c.benchmark_group("Splitters");
     let sample_text = "word1 word2";
@@ -63,6 +73,9 @@ pub fn criterion_benchmark(c: &mut Criterion) {
     });
     group.bench_function("V3", |b| {
         b.iter(|| remove_through_first_char_variant_3(black_box(sample_text), ' '))
+    });
+    group.bench_function("V4", |b| {
+        b.iter(|| remove_through_first_char_variant_4(black_box(sample_text), ' '))
     });
 }
 
