@@ -4,7 +4,6 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 extern crate memchr;
 use memchr::memchr;
-// use aho_corasick::AhoCorasick;
 use std::str;
 
 fn remove_through_first_char(l: &str, ch: char) -> String {
@@ -50,9 +49,7 @@ fn remove_through_first_char_variant_3(s: &str, ch: char) -> &str {
 }
 
 fn remove_through_first_char_variant_4(s: &str, ch: char) -> &str {
-    // This does not use str::splitn(), but probably has an extra bounds check.
-    // But perhaps the compiler will optmize it out? I don't know, you'd need
-    // to measure.
+    // Using memchr library
     match memchr(ch as u8, s.as_bytes()) {
         None => s, // not found => return the whole string
         Some(pos) => &s[pos + 1..],
