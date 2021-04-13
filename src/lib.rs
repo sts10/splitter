@@ -49,3 +49,36 @@ pub fn remove_through_first_char_variant_4(s: &str, ch: char) -> &str {
         Some(pos) => &s[pos + 1..],
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use std::fmt::Debug;
+
+    fn do_test<S>(f: fn(&'static str, char) -> S)
+    where
+        // The return type can be a String or a &str:
+        S: Debug + for<'a> PartialEq<&'a str>,
+    {
+        let test_line = "word1 word2 word3";
+        assert_eq!(f(test_line, ' '), "word2 word3");
+
+        let test_line = "word4";
+        assert_eq!(f(test_line, ' '), "word4");
+
+        let test_line = "1293\tword5";
+        assert_eq!(f(test_line, '\t'), "word5");
+
+        let test_line = "";
+        assert_eq!(f(test_line, '\t'), "");
+    }
+
+    #[test]
+    fn it_works() {
+        do_test(remove_through_first_char);
+        do_test(remove_through_first_char_variant_1);
+        do_test(remove_through_first_char_variant_2);
+        do_test(remove_through_first_char_variant_3);
+        do_test(remove_through_first_char_variant_4);
+    }
+}
