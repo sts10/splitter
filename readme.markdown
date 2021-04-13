@@ -24,13 +24,13 @@ fn remove_through_first_char(l: &str, ch: char) -> String {
 }
 ```
 
-Basically we check if the character is present with a `contains`. If it is, we split on the given character into a vector, remove the first element, the join the vector.
+Basically we check if the character `ch` is present with a `contains`. If it is, we split on the given character `ch` into a vector (`word_vec`), `remove` the first element, then finally `join` the vector into a fresh new String.
 
-While this version works in that it passes the tests in `src/lib.rs`, it is inefficient, mostly because it performs unnecessary allocations and copying of strings. We can do better!
+While this version works in that it passes the tests in `src/lib.rs`, it is inefficient, mostly because it performs unnecessary allocations and copies strings. We can do better!
 
 ## Other approaches
 
-Sergey Bugaev contributed not 1 but ultimately 4 other functions that perform this same task much more efficiently. They're all located in `src/lib.rs`. 
+[Sergey Bugaev](https://github.com/bugaevc) contributed not 1 but ultimately 4 other functions that perform this same task much more efficiently. They're all located in `src/lib.rs`. 
 
 ## Measuring performance of various versions of the function
 
@@ -39,6 +39,8 @@ Using the Rust benchmarking library [Criterion](https://docs.rs/criterion/0.3.4/
 You should be able to run the benchmarks yourself by running `cargo bench`, but spoilers below.
 
 ![Line graph showing performance of various versions of the function](https://user-images.githubusercontent.com/10091584/114528394-a6d20d80-9c51-11eb-8e54-b21c3e2f9cba.png)
+
+### A winner emerges
 
 The clear winner, "V4", is this version, which uses [the memchr library](https://docs.rs/memchr/2.3.4/memchr/):
 
@@ -50,3 +52,8 @@ pub fn remove_through_first_char_variant_4(s: &str, ch: char) -> &str {
     }
 }
 ```
+
+## Contributions
+
+Do you have another way to perform the task described above that you think might be more efficient? Improvements to the existing functions? Feel free to create a pull request!
+
