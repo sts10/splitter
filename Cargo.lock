@@ -470,7 +470,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "split_benches"
+name = "splitter"
 version = "0.1.0"
 dependencies = [
  "criterion",
