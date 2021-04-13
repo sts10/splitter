@@ -32,7 +32,7 @@ While this version works in that it passes the tests in `src/lib.rs`, it is inef
 
 Sergey Bugaev contributed not 1 but ultimately 4 other functions that perform this same task much more efficiently. They're all located in `src/lib.rs`. 
 
-## Performance
+## Measuring performance of various versions of the function
 
 Using the Rust benchmarking library [Criterion](https://docs.rs/criterion/0.3.4/criterion/), we benchmarked each of the functions with varying input data sizes. You can see this code in `benches/splitters.rs`.
 
