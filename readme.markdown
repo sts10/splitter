@@ -30,9 +30,9 @@ While this version works in that it passes the tests in `src/lib.rs`, it is inef
 
 ## Other approaches
 
-[Sergey Bugaev](https://github.com/bugaevc) contributed not 1 but ultimately 4 other functions that perform this same task much more efficiently. They're all located in `src/lib.rs`. 
+[Sergey Bugaev](https://github.com/bugaevc) contributed not 1 but ultimately 4 other implementations of the function that all perform this same task more efficiently. They're all located in `src/lib.rs`. 
 
-## Measuring performance of various versions of the function
+## Measuring performance of various implementations of the function
 
 Using the Rust benchmarking library [Criterion](https://docs.rs/criterion/0.3.4/criterion/), we benchmarked each of the functions with varying input data sizes. You can see this code in `benches/splitters.rs`.
 
@@ -56,4 +56,3 @@ pub fn remove_through_first_char_variant_4(s: &str, ch: char) -> &str {
 ## Contributions
 
 Do you have another way to perform the task described above that you think might be more efficient? Improvements to the existing functions? Feel free to create a pull request!
-
