@@ -1,79 +1,53 @@
-// lot of copy and pasting from:
-// https://bheisler.github.io/criterion.rs/book/getting_started.html
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 
-extern crate memchr;
-use memchr::memchr;
-use std::str;
+use splitter::*;
 
-fn remove_through_first_char(l: &str, ch: char) -> String {
-    if l.contains(ch) {
-        let mut word_vec = l.split(ch).collect::<Vec<&str>>();
-        word_vec.remove(0);
-        return word_vec.join(&ch.to_string());
-    } else {
-        l.to_string()
-    }
+fn make_text(len: usize) -> String {
+    use std::iter::repeat;
+
+    let mut s = String::with_capacity(len);
+    // Start with some 'a' characters.
+    s.extend(repeat('a').take(len / 2));
+    // Then add a single ' '.
+    s.push(' ');
+    let remaining = len - 1 - (len / 2);
+    // Then fill the remaining space with more 'a's.
+    s.extend(repeat('a').take(remaining));
+
+    debug_assert_eq!(s.len(), s.capacity());
+    debug_assert_eq!(s.len(), len);
+    s
 }
 
-fn remove_through_first_char_variant_1(s: &str, ch: char) -> &str {
-    let mut split = s.splitn(2, ch);
-    let before_ch = split
-        .next()
-        .expect("there should always be at least one part");
-    match split.next() {
-        Some(after_ch) => after_ch,
-        None => before_ch,
-    }
-}
-
-fn remove_through_first_char_variant_2(s: &str, ch: char) -> &str {
-    // This is perhaps cleaner, but it performs an (unnecessary) allocation
-    // for the Vec, although a very small one (just two fat pointers).
-    let split: Vec<&str> = s.splitn(2, ch).collect();
-    match &split[..] {
-        [_before_ch, after_ch] => after_ch,
-        [whole] => whole,
-        _ => unreachable!("Not one or two parts?"),
-    }
-}
-
-fn remove_through_first_char_variant_3(s: &str, ch: char) -> &str {
-    // This does not use str::splitn(), but probably has an extra bounds check.
-    // But perhaps the compiler will optmize it out? I don't know, you'd need
-    // to measure.
-    match s.find(ch) {
-        None => s, // not found => return the whole string
-        Some(pos) => &s[pos + 1..],
-    }
-}
-
-fn remove_through_first_char_variant_4(s: &str, ch: char) -> &str {
-    // Using memchr library
-    match memchr(ch as u8, s.as_bytes()) {
-        None => s, // not found => return the whole string
-        Some(pos) => &s[pos + 1..],
-    }
-}
 pub fn criterion_benchmark(c: &mut Criterion) {
-    let mut group = c.benchmark_group("Splitters");
-    let sample_text = "word1 word2";
+    const KB: usize = 1024;
 
-    group.bench_function("Basic", |b| {
-        b.iter(|| remove_through_first_char(black_box(sample_text), ' '))
-    });
-    group.bench_function("V1", |b| {
-        b.iter(|| remove_through_first_char_variant_1(black_box(sample_text), ' '))
-    });
-    group.bench_function("V2", |b| {
-        b.iter(|| remove_through_first_char_variant_2(black_box(sample_text), ' '))
-    });
-    group.bench_function("V3", |b| {
-        b.iter(|| remove_through_first_char_variant_3(black_box(sample_text), ' '))
-    });
-    group.bench_function("V4", |b| {
-        b.iter(|| remove_through_first_char_variant_4(black_box(sample_text), ' '))
-    });
+    let mut group = c.benchmark_group("Splitters");
+
+    let functions = [
+        // ("original", remove_through_first_char),
+        ("v1", remove_through_first_char_variant_1 as fn(&str, char) -> &str),
+        ("v2", remove_through_first_char_variant_2),
+        ("v3", remove_through_first_char_variant_3),
+        ("v4", remove_through_first_char_variant_4),
+    ];
+
+    for &len in &[4, 8, 16, 256, KB, 4 * KB, 16 * KB, 32 * KB] {
+        let text = make_text(len);
+        group.throughput(Throughput::Bytes(len as u64));
+        // For moderate sizes, benchmark the slow function.
+        if len <= 16 * KB {
+            group.bench_with_input(BenchmarkId::new("original", len), &len, |b, _len| {
+                b.iter(|| remove_through_first_char(black_box(&text), ' '))
+            });
+        }
+        // Benchmark the fast functions.
+        for &(name, function) in &functions {
+            group.bench_with_input(BenchmarkId::new(name, len), &len, |b, _len| {
+                b.iter(|| function(black_box(&text), ' '))
+            });
+        }
+    }
 }
 
 criterion_group!(benches, criterion_benchmark);
