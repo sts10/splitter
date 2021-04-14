@@ -53,6 +53,10 @@ pub fn remove_through_first_char_variant_4(s: &str, ch: char) -> &str {
 }
 ```
 
+## Using the function in a non-trivial project
+
+I'm now using this V4 implementation in a tool called [Tidy](https://github.com/sts10/tidy).
+
 ## Contributions
 
 Do you have another way to perform the task described above that you think might be more efficient? Improvements to the existing functions? Feel free to create a pull request!
