@@ -26,10 +26,14 @@ pub fn criterion_benchmark(c: &mut Criterion) {
 
     let functions = [
         // ("original", remove_through_first_char),
-        ("v1", remove_through_first_char_variant_1 as fn(&str, char) -> &str),
+        (
+            "v1",
+            remove_through_first_char_variant_1 as fn(&str, char) -> &str,
+        ),
         ("v2", remove_through_first_char_variant_2),
         ("v3", remove_through_first_char_variant_3),
         ("v4", remove_through_first_char_variant_4),
+        ("v5", remove_through_first_char_variant_5),
     ];
 
     for &len in &[4, 8, 16, 256, KB, 4 * KB, 16 * KB, 32 * KB] {

@@ -50,6 +50,14 @@ pub fn remove_through_first_char_variant_4(s: &str, ch: char) -> &str {
     }
 }
 
+pub fn remove_through_first_char_variant_5(s: &str, ch: char) -> &str {
+    // New in Rust 1.52 https://doc.rust-lang.org/stable/std/primitive.str.html#method.split_once
+    match s.split_once(ch) {
+        Some(split_pair) => split_pair.1,
+        None => s,
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -80,5 +88,6 @@ mod test {
         do_test(remove_through_first_char_variant_2);
         do_test(remove_through_first_char_variant_3);
         do_test(remove_through_first_char_variant_4);
+        do_test(remove_through_first_char_variant_5);
     }
 }
