@@ -38,7 +38,8 @@ Using the Rust benchmarking library [Criterion](https://docs.rs/criterion/0.3.4/
 
 You should be able to run the benchmarks yourself by running `cargo bench`, but spoilers below.
 
-![Line graph showing performance of various versions of the function](https://user-images.githubusercontent.com/10091584/114528394-a6d20d80-9c51-11eb-8e54-b21c3e2f9cba.png)
+<!-- ![Line graph showing performance of various versions of the function](https://user-images.githubusercontent.com/10091584/114528394-a6d20d80-9c51-11eb-8e54-b21c3e2f9cba.png) -->
+![Line graph showing performance of various versions of the function](img/benchmark_fn_comparison.png)
 
 (After running `cargo bench`, graphs like this one are printed to `/target/criterion/Splitters/report/index.html`.)
 
