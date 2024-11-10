@@ -58,6 +58,15 @@ pub fn remove_through_first_char_variant_5(s: &str, ch: char) -> &str {
     }
 }
 
+use stringzilla::StringZilla;
+pub fn remove_through_first_char_variant_6(s: &str, ch: char) -> &str {
+    // https://github.com/ashvardanian/StringZilla?tab=readme-ov-file#quick-start-rust-
+    match s.sz_find(&[ch as u8]) {
+        None => s, // not found => return the whole string
+        Some(pos) => &s[pos + 1..],
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -89,5 +98,6 @@ mod test {
         do_test(remove_through_first_char_variant_3);
         do_test(remove_through_first_char_variant_4);
         do_test(remove_through_first_char_variant_5);
+        do_test(remove_through_first_char_variant_6);
     }
 }

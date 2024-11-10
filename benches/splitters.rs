@@ -34,6 +34,7 @@ pub fn criterion_benchmark(c: &mut Criterion) {
         ("v3", remove_through_first_char_variant_3),
         ("v4", remove_through_first_char_variant_4),
         ("v5", remove_through_first_char_variant_5),
+        ("v6", remove_through_first_char_variant_6),
     ];
 
     for &len in &[4, 8, 16, 256, KB, 4 * KB, 16 * KB, 32 * KB] {
